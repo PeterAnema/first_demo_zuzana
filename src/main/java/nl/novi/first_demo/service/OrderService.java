@@ -1,5 +1,6 @@
 package nl.novi.first_demo.service;
 
+import nl.novi.first_demo.dto.OrderRegelDto;
 import nl.novi.first_demo.dto.OrderRequestDto;
 import nl.novi.first_demo.exeption.RecordNotFoundException;
 import nl.novi.first_demo.model.Order;
@@ -45,7 +46,7 @@ public class OrderService {
         order.setDate(orderRequestDto.getDate());
         order.setCustomerId(orderRequestDto.getCustomerId());
         List<OrderRegel> orderRegels = new ArrayList<>();
-        for(OrderRequestDto.OrderRegelDto orderRegelDto: orderRequestDto.getOrderRegelDtos()) {
+        for(OrderRegelDto orderRegelDto: orderRequestDto.getOrderRegelDtos()) {
             OrderRegel orderRegel = new OrderRegel();
             orderRegel.setQuantity(orderRegelDto.getQuantity());
             orderRegel.setProduct(productRepository.findById(orderRegelDto.getProductId()).orElse(null));
