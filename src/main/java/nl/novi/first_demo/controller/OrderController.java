@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 public class OrderController {
@@ -20,8 +21,10 @@ public class OrderController {
 
     @GetMapping(value = "/orders")
     @ResponseStatus(HttpStatus.OK)
-    public Iterable<Order> getCustomers() {
-        return orderService.getOrders();
+    public Iterable<Order> getOrders(
+            @RequestParam Optional<Boolean> paid,
+            @RequestParam Optional<Boolean> delivered) {
+        return orderService.getOrders(paid, delivered);
     }
 
 
@@ -32,7 +35,7 @@ public class OrderController {
     }
 
     @PostMapping(value = "/orders")
-    public ResponseEntity addOrder(@RequestBody OrderRequestDto orderRequestDto){
+    public ResponseEntity<Object> addOrder(@RequestBody OrderRequestDto orderRequestDto){
         Long newId = orderService.addOrder(orderRequestDto);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -54,6 +57,20 @@ public class OrderController {
     public String updateOrder(@PathVariable long id, @RequestBody Order order) {
         orderService.updateOrder(id, order);
         return "Updated";
+    }
+
+    @PatchMapping(value = "/orders/{id}/paid")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public String setOrderPaid(@PathVariable long id, @RequestBody boolean isPaid) {
+        orderService.setOrderPaid(id, isPaid);
+        return "Updated Paid";
+    }
+
+    @PatchMapping(value = "/orders/{id}/delivered")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public String setOrderDelivered(@PathVariable long id, @RequestBody boolean isDelivered) {
+        orderService.setOrderDelivered(id, isDelivered);
+        return "Updated Delivered";
     }
 
 

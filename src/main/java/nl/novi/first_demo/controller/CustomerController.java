@@ -1,8 +1,10 @@
 package nl.novi.first_demo.controller;
 
 import nl.novi.first_demo.model.Customer;
+import nl.novi.first_demo.model.Order;
 import nl.novi.first_demo.model.Supplier;
 import nl.novi.first_demo.service.CustomerService;
+import nl.novi.first_demo.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,9 @@ public class CustomerController {
 
     @Autowired
     private CustomerService customerService;
+
+    @Autowired
+    private OrderService orderService;
 
     @GetMapping(value = "/customers")
     @ResponseStatus(HttpStatus.OK)
@@ -33,7 +38,7 @@ public class CustomerController {
 
 
     @PostMapping(value = "/customers")
-    public ResponseEntity addCustomer(@RequestBody Customer customer){
+    public ResponseEntity<Object> addCustomer(@RequestBody Customer customer){
         Long newId = customerService.addCustomer(customer);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
@@ -56,4 +61,11 @@ public class CustomerController {
         customerService.updateCustomer(id, customer);
         return "Updated customer";
     }
+
+    @GetMapping(value = "/customers/{id}/orders")
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<Order> getCustomerOrders(@PathVariable long id) {
+        return orderService.getOrdersByCustomerId(id);
+    }
+
 }

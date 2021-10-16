@@ -1,6 +1,12 @@
 package nl.novi.first_demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
+
+import static nl.novi.first_demo.util.Rounding.roundTo;
 
 @Entity
 @Table(name = "order_regels")
@@ -15,6 +21,7 @@ public class OrderRegel {
     private int quantity;
 
     @ManyToOne
+    @JsonBackReference
     private Order order;
 
     public long getId() {
@@ -48,4 +55,27 @@ public class OrderRegel {
     public void setOrder(Order order) {
         this.order = order;
     }
+
+    // more methodes
+
+    @JsonGetter("SubTotalExclVat")
+    public double calculateSubTotalExclVat() {
+        return roundTo(quantity * product.getPrice(), 2);
+    }
+
+    @JsonGetter("SubTotalVatPercentage")
+    public double calculateSubTotalVatPercentage() {
+        return product.getVatPercentage();
+    }
+
+    @JsonGetter("SubTotalVat")
+    public double calculateSubTotalVat() {
+        return roundTo(quantity * product.getPrice() * product.getVatPercentage() / 100, 2);
+    }
+
+    @JsonGetter("SubTotalInclVat")
+    public double calculateSubTotalInclVat() {
+        return calculateSubTotalExclVat() + calculateSubTotalVat();
+    }
+
 }

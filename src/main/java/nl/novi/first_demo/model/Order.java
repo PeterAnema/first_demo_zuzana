@@ -1,9 +1,13 @@
 package nl.novi.first_demo.model;
 
+import com.fasterxml.jackson.annotation.*;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static nl.novi.first_demo.util.Rounding.roundTo;
 
 @Entity
 @Table(name = "orders")
@@ -13,34 +17,22 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    String customerName;
-    long customerId;
+
+    @ManyToOne
+    @JsonInclude
+    Customer customer;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern= "yyyy-MM-dd")
     Date date;
+
     boolean paid = false;
     boolean delivered = false;
 
-
     @OneToMany(mappedBy = "order")
+    @JsonManagedReference
     List<OrderRegel> orderRegels = new ArrayList<>();
 
     //setter en getters
-
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
-
-    public long getCustomerId() {
-        return customerId;
-    }
-
-    public void setCustomerId(long customerId) {
-        this.customerId = customerId;
-    }
 
     public long getId() {
         return id;
@@ -49,7 +41,6 @@ public class Order {
     public void setId(long id) {
         this.id = id;
     }
-
 
     public Date getDate() {
         return date;
@@ -75,6 +66,14 @@ public class Order {
         this.delivered = delivered;
     }
 
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     public List<OrderRegel> getOrderRegels() {
         return orderRegels;
     }
@@ -82,4 +81,38 @@ public class Order {
     public void setOrderRegels(List<OrderRegel> orderRegels) {
         this.orderRegels = orderRegels;
     }
+
+    // more methodes
+
+    public void addOrderRegel(OrderRegel orderRegel) {
+        this.orderRegels.add(orderRegel);
+    }
+
+    @JsonGetter("TotalExclVat")
+    public double calculateTotalExclVat() {
+        double total = 0;
+        for (OrderRegel orderRegel: orderRegels) {
+            total += orderRegel.calculateSubTotalExclVat();
+        }
+        return roundTo(total, 2);
+    }
+
+    @JsonGetter("TotalVat")
+    public double calculateTotalVat() {
+        double total = 0;
+        for (OrderRegel orderRegel: orderRegels) {
+            total += orderRegel.calculateSubTotalVat();
+        }
+        return roundTo(total, 2);
+    }
+
+    @JsonGetter("TotalInclVat")
+    public double calculateTotalInclVat() {
+        double total = 0;
+        for (OrderRegel orderRegel: orderRegels) {
+            total += orderRegel.calculateSubTotalInclVat();
+        }
+        return roundTo(total, 2);
+    }
+
 }

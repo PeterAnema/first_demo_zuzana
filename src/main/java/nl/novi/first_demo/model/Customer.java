@@ -1,8 +1,12 @@
 package nl.novi.first_demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jdk.jfr.Enabled;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "customers")
@@ -18,6 +22,10 @@ public class Customer {
     private String address;
     private String email;
 
+    @OneToMany
+    @JsonIgnore
+    List<Order> orders;
+
     public long getId() {
         return id;
     }
@@ -25,7 +33,8 @@ public class Customer {
     public void setId(long id) {
         this.id = id;
     }
-// setter and getters
+
+    // setter and getters
 
     public String getName() {
         return name;
@@ -50,4 +59,17 @@ public class Customer {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public List<Order> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public void addOrder(Order order) {
+        this.orders.add(order);
+    }
+
 }

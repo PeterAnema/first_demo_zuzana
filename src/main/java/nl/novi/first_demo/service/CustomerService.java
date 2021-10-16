@@ -62,7 +62,6 @@ public class CustomerService {
             throw new RecordNotFoundException("Customer with id " + id + " not found.");
         }
 
-
     }
 
 }

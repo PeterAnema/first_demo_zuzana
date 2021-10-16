@@ -16,8 +16,8 @@ public class Product {
     private String packaging;
     private String description;
     private String photo;
-    private double price;
-    private int vatPercentage;
+    private double price = 0;
+    private int vatPercentage = 0;
 
     // constructor not required for Springboot Hibernate
     public Product() {
